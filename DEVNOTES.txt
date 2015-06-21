@@ -1,0 +1,17 @@
+Create a query handling script. 
+Summoner submits query => New query is generated.
+Script in the background executes each query when there are available queries. 
+
+Query model:
+
+Query {
+key = "insertkeyhere"	
+
+def execute("querytext")
+	executes a query
+	returns result.
+	#log query and result. (w timestamps?)
+end
+
+
+}

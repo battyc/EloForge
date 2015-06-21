@@ -1,0 +1,25 @@
+<h1><%= @summoner.formattedName %></h1>
+<p><%= @game.gameData['games'][0]['subType'] %></p>
+<p><%= @summoner.lastUpdated %></p>
+<p><%= (@summoner.lastUpdated.to_i - Time.now.to_i)%></p>
+<p>KDA: <%= (@gameStats['championsKilled'].to_i + @gameStats['assists'].to_i*1.00 )/@gameStats['numDeaths'].to_i %></p>
+<p>Overall DPS: <%= @gameStats['totalDamageDealt'] / @gameStats['timePlayed']%></p>
+<p>Damage Taken per second: <%= @gameStats['totalDamageTaken'] / @gameStats['timePlayed']%></p>
+<p>Healing per second: <%= @gameStats['totalHeal'] / @gameStats['timePlayed']%></p>
+<p>CS per minute: <%= (@gameStats['neutralMinionsKilled'].to_i + @gameStats['minionsKilled'].to_i) / (@gameStats['timePlayed']/60.0) %></p>
+<% if @gameStats['wardPlaced'] != nil %>
+<p>Wards per 3 minutes: <%= ( @gameStats['wardPlaced']) / ( @gameStats['timePlayed'] / 180.0 ) %></p>
+<% else %>
+<p>Wards per 3 minutes: 0 </p>
+<% end %>
+<% if @gameStats['wardKilled'] != nil %>
+<p>Wards destroyed: <%= @gameStats['wardKilled'] %></p>
+<% else %>
+<p>Wards destroyed: 0 </p>
+<% end %>
+<% if @gameStats['totalTimeCrowdControlDealt'] != nil %>
+<p>Minutes of Crowd Control: <%= @gameStats['totalTimeCrowdControlDealt'] / 60.00 %></p>
+<% end %>
+<p><%= @gameStats %></p>
+
+<!-- TODO: Evaluate itemization -->

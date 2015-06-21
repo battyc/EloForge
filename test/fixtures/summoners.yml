@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  formattedName: MyString
+  internalName: MyString
+  summonerId: 1
+  lastUpdated: 2015-06-19 01:21:43
+
+two:
+  formattedName: MyString
+  internalName: MyString
+  summonerId: 1
+  lastUpdated: 2015-06-19 01:21:43
