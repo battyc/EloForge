@@ -1,7 +1,7 @@
 <h1>Nothing worth having is given.</h1>
 <p>Evaluate your last game now.</p>
 
-<%= form_tag("summoner/results", method: "get") do %>
+<%= form_tag("results", method: "get") do %>
   <%= text_field_tag(:search) %>
   <%= submit_tag("Go") %>
 <% end %>

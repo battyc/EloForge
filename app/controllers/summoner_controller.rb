@@ -3,8 +3,8 @@ class SummonerController < ApplicationController
 
 	end
 
-while it hasnt been 10 seconds
-	count to 10 then stop allowing requests. #replace 10 with rate limit
+	# while it hasnt been 10 seconds
+	# count to 10 then stop allowing requests. #replace 10 with rate limit
 	# Make an object that stores a created time and a query number. 
 	# Each iteration checks the time that has passed between the first query and the current query and the number of queriies
 	# run.  If queries run reaches x before 10 seconds has passed or total before 5 minutes, all further queries are ignored.
@@ -47,22 +47,22 @@ while it hasnt been 10 seconds
 		end
 
 		if @summoner.lastUpdated == nil || ((@summoner.lastUpdated - Time.now.to_i) < -900)
-			request2 = "https://na.api.pvp.net/api/lol/na/v1.3/game/by-summoner/" + @summoner.summonerId.to_s + "/recent/?api_key=" + key
+			request2 = "https://na.api.pvp.net/api/lol/na/v2.2/matchhistory/" + @summoner.summonerId.to_s + "i_key=" + key
 			uri2 = URI(request2)
 			Net::HTTP.start(uri2.host, uri2.port, :use_ssl => uri2.scheme == 'https') do |http|
 				request2 = Net::HTTP::Get.new uri2.request_uri
 				response2 = http.request request2    
 				resp = JSON.parse response2.body.to_s
-				@game = Game.new(:gameData => response2.body.to_s, :gameId => resp['games'][0]['gameId'])
+				@game = Game.new(:gameData => response2.body.to_s, :gameId => resp['matches'][0]['matchId'])
 				@summoner.lastGameId = @game.gameId
 				@summoner.lastUpdated = Time.now
-				@gameStats = resp['games'][0]['stats']
+				@gameStats = resp['matches'][0]['participantIdentities'][0]['stats']
 				@game.save
 				@summoner.save
 			end
 		else
 			@game = Game.find_by gameId: @summoner.lastGameId
-			@gameStats = JSON.parse(@game.gameData)['games'][0]['stats']
+			@gameStats = JSON.parse(@game.gameData)['matches'][0]['participantIdentities'][0]['stats']
 
 
 		end

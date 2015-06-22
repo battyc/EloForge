@@ -1,4 +1,8 @@
 <h1><%= @summoner.formattedName %></h1>
+<h3><%= @summoner.summonerId %></h3>
+<p><%= @game.gameData %></p>
+
+<!--
 <p><%= @game.gameData['games'][0]['subType'] %></p>
 <p><%= @summoner.lastUpdated %></p>
 <p><%= (@summoner.lastUpdated.to_i - Time.now.to_i)%></p>
