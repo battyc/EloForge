@@ -17,7 +17,39 @@
 <% if @gameStats['totalTimeCrowdControlDealt'] != nil %>
 <p>Minutes of Crowd Control: <%= @gameStats['totalTimeCrowdControlDealt'] / 60.00 %></p>
 <% end %>
-<p><%= @gameData['matches'] %></p>
+<h3>Head to Head</h3>
+<table>
+	<tr>
+		<td>Test</td>
+		<td>CS Per Minute</td>
+		<td>XP Per Minute</td>
+		<td>Damage Taken Per Minute</td>
+	</tr>
+	<tr>
+		<td>Early Game(0m-10m)</td>
+		<td><%= @selectedMatch['timeline']['creepsPerMinDeltas']['zeroToTen'].to_s %> </td>
+		<td><%= @selectedMatch['timeline']['xpPerMinDeltas']['zeroToTen'].to_s %> </td>
+		<td><%= @selectedMatch['timeline']['damageTakenPerMinDeltas']['zeroToTen'].to_s %> </td>
+	</tr>
+	<tr>
+		<td>Mid Game (10m-20m)</td>
+		<td><%= @selectedMatch['timeline']['creepsPerMinDeltas']['tenToTwenty'].to_s %> </td>
+		<td><%= @selectedMatch['timeline']['xpPerMinDeltas']['tenToTwenty'].to_s %> </td>
+		<td><%= @selectedMatch['timeline']['damageTakenPerMinDeltas']['tenToTwenty'].to_s %> </td>
+	</tr>
+		<td>Late Game (20m-30m)</td>
+		<td><%= @selectedMatch['timeline']['creepsPerMinDeltas']['twentyToThirty'].to_s %> </td>
+		<td><%= @selectedMatch['timeline']['xpPerMinDeltas']['twentyToThirty'].to_s %> </td>
+		<td><%= @selectedMatch['timeline']['damageTakenPerMinDeltas']['twentyToThirty'].to_s %> </td>
+	<tr>
+		<td>Super Late Game (30m-end)</td>
+		<td><%= @selectedMatch['timeline']['creepsPerMinDeltas']['thirtyToEnd'].to_s %> </td>
+		<td><%= @selectedMatch['timeline']['xpPerMinDeltas']['thirtyToEnd'].to_s %> </td>
+		<td><%= @selectedMatch['timeline']['damageTakenPerMinDeltas']['thirtyToEnd'].to_s %> </td>
+	</tr>
+
+</table>
+<p><%= @gameData['matches'][9] %></p>
 
 <!-- TODO: Evaluate itemization -->
 <!-- TODO: CHAMPION NUMBER TO NAME--> 

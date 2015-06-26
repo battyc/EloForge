@@ -22,6 +22,6 @@ class SummonerController < ApplicationController
 		@game = Game.find_by gameId: @summoner.lastGameId
 		@gameData = JSON.parse @game.gameData
 		@gameStats = @gameData['matches'][9]['participants'][0]['stats']
-
+		@selectedMatch = @gameData['matches'][9]['participants'][0]
 	end
 end

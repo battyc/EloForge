@@ -6,3 +6,11 @@
   <%= text_field_tag(:search) %>
   <%= submit_tag("Go") %>
 <% end %>
+<% if $globalQueue %>
+<%= $globalQueue.inspect %>
+<p>Short: <%= $globalQueue.shortTimer %></p>
+<p>Long: <%= $globalQueue.longTimer %></p>
+<% @total_summoners.each do |s| %>
+<p><%= s.formattedName %> was last updated <%= Time.now.to_i - s.lastUpdated.to_i %> seconds ago</p>
+<% end %>
+<% end %>
