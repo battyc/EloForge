@@ -1,12 +1,19 @@
-<h1><%= @summoner.formattedName %></h1>
-<h3><%= @gameData['matches'][9]['participants'][0]['timeline']['lane']%></h3>
-<p><%= @gameData['matches'][9]['queueType']%></p>
-<p><%= @summoner.lastUpdated %></p>
-<p><%= (@summoner.lastUpdated.to_i - Time.now.to_i)%></p>
+<% if @gameStats['winner'] %>
+<h1 class="win"><%= @summoner.formattedName %></h1>
+<% else %>
+<h1 class="loss"><%= @summoner.formattedName %></h1>
+<% end %>
+<h3><%= @lane%></h3>
+<p><%= @queueType%></p>
+<% if @update < 900 %>
+<p>Can be updated in: <%= 900 - @update %> seconds.</p>
+<% else %>
+<p>Update Now!</p>
+<% end %>
 <p>KDA: <%= (@gameStats['kills'].to_i + @gameStats['assists'].to_i*1.00 )/@gameStats['deaths'].to_i %></p>
 <p>Overall DPS: <%= @gameStats['totalDamageDealt'].to_i / @gameData['matches'][9]['matchDuration']%></p>
 <p>Damage Taken per second: <%= @gameStats['totalDamageTaken'].to_i / @gameData['matches'][9]['matchDuration']%></p>
-<p>Healing per second: <%= @gameStats['totalHeal'].to_i / @gameData['matches'][9]['matchDuration']%></p>
+<p>Healing per Minute: <%= @gameStats['totalHeal'].to_i / @gameData['matches'][9]['matchDuration']*60.00%></p>
 <p>CS per minute: <%= (@gameStats['neutralMinionsKilled'].to_i + @gameStats['minionsKilled'].to_i) / (@gameData['matches'][9]['matchDuration']/60.0) %></p>
 <% if @gameStats['wardsPlaced'] != nil %>
 <p>Wards per 3 minutes: <%= ( @gameStats['wardsPlaced']) / ( @gameData['matches'][9]['matchDuration'] / 180.0 ) %></p>
@@ -49,6 +56,7 @@
 	</tr>
 
 </table>
+
 <p><%= @gameData['matches'][9] %></p>
 
 <!-- TODO: Evaluate itemization -->

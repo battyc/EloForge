@@ -5,40 +5,39 @@ class Summoner < ActiveRecord::Base
     	summoner = Summoner.find_by internalName: summName.downcase.delete(' ').to_s
     	key = "f41ed978-fff5-4ae3-b1df-7e9131627fee" 
 
-    	if summoner != nil
-    		time = summoner.lastUpdated.to_i - Time.now.to_i
-    	end
-  		if (summoner == nil || time < -86400 ) # Measured in seconds, auto updates once a day
+  		if (summoner == nil) # Measured in seconds, auto updates once a day
 		# Run only if # is not already stored or it is out of date.
 			logger.info "Begin summoner update/creation."
 			request = "https://na.api.pvp.net/api/lol/na/v1.4/summoner/by-name/" + summName.downcase.delete(' ') + "?api_key=" + key
 			if ($globalQueue == nil)
 				RateLimit::Query.start
 			end
+
 			if $globalQueue.can_query?
 				logger.debug "Start queryQueue"
 				response = RateLimit::Query.execute(request)
-				response_hash = JSON.parse response.body.to_s
+				@response_hash = JSON.parse response.body.to_s
 				logger.debug "execute #{request}"
 			else
-				logger.debug "execute #{request}"
-				response = RateLimit::Query.execute(request)
-				response_hash = JSON.parse response.body.to_s
+				logger.debug "request failed #{request}"
+				response = "BUSY"
+				return response
 			end
-			logger.debug "#{response_hash}"
-			summId = response_hash[summName.downcase.delete(' ')]['id']
-			
+			puts "#{$globalQueue.inspect}"
+			summId = @response_hash[summName.downcase.delete(' ')]['id']
+
 			if summoner == nil
-				summoner = Summoner.new(:formattedName => response_hash[summName.downcase.delete(' ')]['name'], :internalName => summName.downcase.delete(' '), :summonerId => summId, :lastUpdated => (Time.now.to_i - 1000) )
+				summoner = Summoner.new(:formattedName => @response_hash[summName.downcase.delete(' ')]['name'], :internalName => summName.downcase.delete(' '), :summonerId => summId, :lastUpdated => (Time.now.to_i - 1000) )
 				logger.info "Created summoner data for summoner id: #{summoner.summonerId}"
 			else
 				logger.info "Updating summoner data for summoner id: #{summoner.summonerId}"
 				summoner.lastUpdated = Time.now.to_i
-				summoner.formattedName = response_hash[summName.downcase.delete(' ')]['name']
+				summoner.formattedName = @response_hash[summName.downcase.delete(' ')]['name']
 				summoner.internalName = summName.downcase.delete(' ')
 			end
 			summoner.save
 		end
+
 		logger.info "Begin game request for #{summoner.summonerId}"
 		
 		if summoner.lastUpdated == nil || ((Time.now.to_i - summoner.lastUpdated) > 900)
@@ -53,8 +52,8 @@ class Summoner < ActiveRecord::Base
 				logger.debug "execute #{request2}"
 			else
 				logger.debug "execute #{request2}"
-				@resp = RateLimit::Query.execute(request2)
-				@resp_hash = JSON.parse @resp.body.to_s
+				response = "BUSY"
+				return response
 			end
 			game = Game.new(:gameData => @resp.body.to_s, :gameId => @resp_hash['matches'][9]['matchId'])
 			summoner.lastGameId = game.gameId

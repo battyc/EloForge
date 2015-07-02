@@ -42,7 +42,6 @@ module RateLimit
 					shortPass = true
 					@shortTimer = Time.now.to_i
 					@shortCount = 0
-					Rails.logger.info('shortCount should be 0 but is: #{@shortCount}')
 				end
 
 				# Check longcap, if test fails 

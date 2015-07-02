@@ -1,9 +1,9 @@
 Rails.application.routes.draw do
 
-  root 'static_pages#index'
+  root 'summoner#index'
   get 'static_pages/about', :to => 'static_pages#about', :as => '/about'
 
-  get 'summoner/index'
+  get 'static_pages/index'
   post 'summoner/search'
   get 'summoner/results'
 

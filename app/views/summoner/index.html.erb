@@ -1,12 +1,12 @@
-<h1>Nothing worth having is given.</h1>
-<p>Evaluate your last game now.</p>
-<p>Total Users: <%= @total_summoners.length %></p>
+<h1>EloForge</h1>
 
-<%= form_tag("search", method: "post") do %>
+<p>Evaluate your last game now!</p>
+<%= form_tag("summoner/search", method: "post") do %>
   <%= text_field_tag(:search) %>
   <%= submit_tag("Go") %>
 <% end %>
 <% if $globalQueue %>
+ <div class="error"><%= flash[:error] %></div>
 <%= $globalQueue.inspect %>
 <p>Short: <%= $globalQueue.shortTimer %></p>
 <p>Long: <%= $globalQueue.longTimer %></p>
