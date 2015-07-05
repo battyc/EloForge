@@ -1,6 +1,6 @@
 
 <h3>Evaluate your last game now!</h3>
-<%= form_tag("summoner/search", method: "post") do %>
+<%= form_tag("search", method: "post") do %>
   <%= text_field_tag(:search, nil, placeholder: 'Summoner Name') %>
   <%= select 'servers' , 'server', %w(NA EUW EUNE KR BR LAN LAS OCE RU TR), :include_blank => false%>
   <%= submit_tag("Go") %>
