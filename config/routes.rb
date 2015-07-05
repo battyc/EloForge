@@ -1,11 +1,11 @@
 Rails.application.routes.draw do
 
-  root 'summoner#index'
+  root 'static_pages#index'
   get 'static_pages/about', :to => 'static_pages#about', :as => '/about'
 
   get 'static_pages/index'
-  post 'summoner/search'
-  get 'summoner/results'
+  #post 'summoner/search'
+  #get 'summoner/results'
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

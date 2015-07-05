@@ -3,9 +3,7 @@ class Summoner < ActiveRecord::Base
     	# Check if name is already connected to a number.
     	summName = params['search']
     	server = params['servers']['server']
-    	logger.info("#{summName} is here!")
     	@internalName = summName.to_s.downcase.delete(' ')
-    	logger.info("#{@internalName} is here!")
     	@summoner = Summoner.find_by internalName: @internalName
 
   		if (@summoner == nil)
@@ -44,9 +42,7 @@ class Summoner < ActiveRecord::Base
 			call.getMatchHistoryById(@summoner.summonerId)
 			resp = call.response
 			call.save
-			Rails.logger.debug "resp: #{resp}"
-			game = Game.new(:gameData => resp, :gameId => resp['matches'][9]['matchId'])
-			
+			game = Game.new(:gameData => resp, :gameId => resp['matches'][9]['matchId'])			
 			@summoner.lastGameId = game.gameId
 			@summoner.lastUpdated = Time.now.to_i
 			game.save
