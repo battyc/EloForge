@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-require 'net/http'
+gem 'dotenv-rails'
 
 gem 'daemons-rails'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'

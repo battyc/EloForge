@@ -1,39 +1,5 @@
-Create a query handling model and controller.
-Summoner submits query => New query is generated.=> Summoner sees "searching" screen while queries pass => Upon return, displays result or varying error screens depending on the response.
+EloForge
+
+Goals: Provide an analysis platform that allows players to evaluate their games and use the data to improve.
 
 
-Script in the background executes each query when there are available queries. 
-create a global LoLQueryQueue
-
-LoLQueryQueue
-index = 0
-arr = array of queries[]
-
-# First In First Out
-add (Query) to queue 
-execute(query)
-remove (Query) from queue
-
-
-
-# JUST A MODEL DON'T CREATE A MIGRATION FOR IT TO ACTUALLY SAVE!
-Query model:
-
-Query {
-private (protected?  )
-def execute("querytext")
-	executes a query
-	returns result.
-	#log query and result if it's anything other than a 200 response. (w timestamps)
-end
-
-}
-
-
-Query Helper?  Or something...
-
-
-static key = "insertkeyhere"
-def get_key
-	return key
-end	

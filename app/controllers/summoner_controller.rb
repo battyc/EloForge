@@ -4,7 +4,7 @@ class SummonerController < ApplicationController
 	end
 
 	def search
-		id = Summoner.update(params['search'])
+		id = Summoner.update(params)
 		if id != "BUSY"
 			redirect_to summoner_results_path(:summId => id)
 		else
@@ -16,8 +16,9 @@ class SummonerController < ApplicationController
 	def results
 		@summoner = Summoner.find_by summonerId: params[:summId]
 		@game = Game.find_by gameId: @summoner.lastGameId
-		@gameData = JSON.parse @game.gameData
-		@gameStats = @gameData['matches'][9]['participants'][0]['stats']
+
+		@gameData = @game.gameData
+		@gameStats = @gameData['matches'][0]['participants'][0]['stats']
 		@selectedMatch = @gameData['matches'][9]['participants'][0]
 		@lane = @gameData['matches'][9]['participants'][0]['timeline']['lane']
 		if @lane == "BOTTOM"

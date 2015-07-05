@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150620020316) do
+ActiveRecord::Schema.define(version: 20150702050002) do
 
   create_table "games", force: :cascade do |t|
     t.text     "gameData"
@@ -21,6 +21,16 @@ ActiveRecord::Schema.define(version: 20150620020316) do
   end
 
   add_index "games", ["gameId"], name: "index_games_on_gameId"
+
+  create_table "riot_api_calls", force: :cascade do |t|
+    t.text     "server"
+    t.text     "api_call"
+    t.text     "response"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "riot_api_calls", ["api_call"], name: "index_riot_api_calls_on_api_call"
 
   create_table "summoners", force: :cascade do |t|
     t.string   "formattedName"

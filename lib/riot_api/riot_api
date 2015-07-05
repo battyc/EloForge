@@ -1,0 +1,36 @@
+def module RiotApi
+	def module RiotApi
+		def getSummonerByName(summonerName)
+			#Create the Request
+
+			logger.debug "Summ: #{summonerName}"
+			request_query = summonerName
+			request_url = "https://na.api.pvp.net/api/lol/" + "na" +"/v1.4/summoner/by-name/" + request_query + "?api_key=" + @key
+			#Execute the Request
+			buffer = open(request_url).read
+			result = JSON.parse(buffer)
+			call = RiotApiCall.create(:server => server, :api_call => request_url , :response => result)
+			#save the query response
+			return call
+		end
+
+		def getMatchHistoryById(summId)
+			#Create the Request
+			request_url = "https://na.api.pvp.net/api/lol/na/v2.2/matchhistory/" + summId.to_s + "?api_key=" + @key
+			
+			#Execute the Request
+			#TODO CREATE A JOB FOR EXECUTING REQUESTS.
+			buffer = open(request_url).read
+			result = JSON.parse(buffer)
+			call = RiotApiCall.new(:server => server, :api_call => request_url , :response => result)
+			#save the query response
+			return result
+		end
+
+		def getSummonerByNames(summNames)
+			request = "https://na.api.pvp.net/api/lol/na/v2.2/matchhistory/" + summoner.summonerId.to_s + "?api_key=" + @key
+			#queue the request to be processed
+			#save the query response
+		end
+	end
+end

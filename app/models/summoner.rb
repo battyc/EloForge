@@ -1,68 +1,60 @@
 class Summoner < ActiveRecord::Base
-	include RateLimit::Query
-	def self.update(summName)
+	def self.update(params)
     	# Check if name is already connected to a number.
-    	summoner = Summoner.find_by internalName: summName.downcase.delete(' ').to_s
-    	key = "f41ed978-fff5-4ae3-b1df-7e9131627fee" 
+    	summName = params['search']
+    	server = params['servers']['server']
+    	logger.info("#{summName} is here!")
+    	@internalName = summName.to_s.downcase.delete(' ')
+    	logger.info("#{@internalName} is here!")
+    	@summoner = Summoner.find_by internalName: @internalName
 
-  		if (summoner == nil) # Measured in seconds, auto updates once a day
-		# Run only if # is not already stored or it is out of date.
-			logger.info "Begin summoner update/creation."
-			request = "https://na.api.pvp.net/api/lol/na/v1.4/summoner/by-name/" + summName.downcase.delete(' ') + "?api_key=" + key
-			if ($globalQueue == nil)
-				RateLimit::Query.start
-			end
+  		if (@summoner == nil)
+		# Run only if # is not already stored or it is out of date
+			call = RiotApiCall.new(:server => server, :summName => @internalName)
+			call.getSummonerByName
+			call.save
+			@responseHash = call.response
 
-			if $globalQueue.can_query?
-				logger.debug "Start queryQueue"
-				response = RateLimit::Query.execute(request)
-				@response_hash = JSON.parse response.body.to_s
-				logger.debug "execute #{request}"
+			@summoner = Summoner.find_by summonerId: @responseHash[call.summName]['id']
+			if @summoner != nil
+				#summoner is already stored under a different name, update the name
+				@summoner.internalName = @internalName
+				@summoner.formattedName = @responseHash[call.summName]['name']
+				@summoner.lastUpdated = Time.now.to_i
+				@summoner.save
 			else
-				logger.debug "request failed #{request}"
-				response = "BUSY"
-				return response
+				summId = @responseHash[call.summName]['id']
+				@summoner = Summoner.new(:formattedName => @responseHash[call.summName]['name'], :internalName => call.summName, :summonerId => summId, :lastUpdated => (Time.now.to_i - ENV['UPDATE_AFTER_SECONDS'].to_i) )
+				@summoner.save
 			end
-			puts "#{$globalQueue.inspect}"
-			summId = @response_hash[summName.downcase.delete(' ')]['id']
-
-			if summoner == nil
-				summoner = Summoner.new(:formattedName => @response_hash[summName.downcase.delete(' ')]['name'], :internalName => summName.downcase.delete(' '), :summonerId => summId, :lastUpdated => (Time.now.to_i - 1000) )
-				logger.info "Created summoner data for summoner id: #{summoner.summonerId}"
-			else
-				logger.info "Updating summoner data for summoner id: #{summoner.summonerId}"
-				summoner.lastUpdated = Time.now.to_i
-				summoner.formattedName = @response_hash[summName.downcase.delete(' ')]['name']
-				summoner.internalName = summName.downcase.delete(' ')
-			end
-			summoner.save
+		elsif (Time.now.to_i - @summoner.lastUpdated > 900)
+			call = RiotApiCall.new(:server => server, :summName => @internalName)
+			call.getSummonerByName
+			call.save
+			resp_hash = call.response
+			@summoner.formattedName = resp_hash[call.summName]['name']
+			@summoner.internalName = @internalName
+			@summoner.save
 		end
-
-		logger.info "Begin game request for #{summoner.summonerId}"
 		
-		if summoner.lastUpdated == nil || ((Time.now.to_i - summoner.lastUpdated) > 900)
-			request2 = "https://na.api.pvp.net/api/lol/na/v2.2/matchhistory/" + summoner.summonerId.to_s + "?api_key=" + key
+		if (Time.now.to_i - @summoner.lastUpdated) > 900
+			#If the summoner is due for a game update, update the games.
+			request2 = "https://" + server.downcase + ".api.pvp.net/api/lol/" + server.downcase + "/v2.2/matchhistory/" + @summoner.summonerId.to_s + "?api_key=" + ENV['RIOT_API_KEY'].to_s
+			call = RiotApiCall.new(:server => server.downcase, :api_call => request2, :summName => @internalName)
+			call.getMatchHistoryById(@summoner.summonerId)
+			resp = call.response
+			call.save
+			Rails.logger.debug "resp: #{resp}"
+			game = Game.new(:gameData => resp, :gameId => resp['matches'][9]['matchId'])
 			
-			if ($globalQueue == nil)
-				RateLimit::Query.start
-			end
-			if $globalQueue.can_query?
-				@resp = RateLimit::Query.execute(request2)
-				@resp_hash = JSON.parse @resp.body.to_s
-				logger.debug "execute #{request2}"
-			else
-				logger.debug "execute #{request2}"
-				response = "BUSY"
-				return response
-			end
-			game = Game.new(:gameData => @resp.body.to_s, :gameId => @resp_hash['matches'][9]['matchId'])
-			summoner.lastGameId = game.gameId
-			summoner.lastUpdated = Time.now.to_i
+			@summoner.lastGameId = game.gameId
+			@summoner.lastUpdated = Time.now.to_i
 			game.save
-			summoner.save
+			@summoner.save
 			logger.info "Game #{game.gameId} saved."
 		end
 
-		return summoner.summonerId
+
+		return @summoner.summonerId
 	end
 end
