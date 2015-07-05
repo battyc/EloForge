@@ -11,6 +11,7 @@ class Summoner < ActiveRecord::Base
 			call = RiotApiCall.new(:server => server, :summName => @internalName)
 			call.getSummonerByName
 			call.save
+			#logger.debug "MODEL LEVEL: #{call.inspect}"
 			@responseHash = call.response
 
 			@summoner = Summoner.find_by summonerId: @responseHash[call.summName]['id']
@@ -28,7 +29,6 @@ class Summoner < ActiveRecord::Base
 		elsif (Time.now.to_i - @summoner.lastUpdated.to_i > 900)
 			call = RiotApiCall.new(:server => server, :summName => @internalName)
 			call.getSummonerByName
-			call.save
 			resp_hash = call.response
 			@summoner.formattedName = resp_hash[call.summName]['name']
 			@summoner.internalName = @internalName
@@ -41,16 +41,16 @@ class Summoner < ActiveRecord::Base
 			call = RiotApiCall.new(:server => server.downcase, :api_call => request2, :summName => @internalName)
 			call.getMatchHistoryById(@summoner.summonerId)
 			resp = call.response
-			call.save
+			#logger.debug "#{resp['matches']}"
 			game = Game.new(:gameData => resp, :gameId => resp['matches'][9]['matchId'])			
 			@summoner.lastGameId = game.gameId
-			@summoner.lastUpdated = Time.now
+			@summoner.lastUpdated = Time.now.to_i
 			game.save
 			@summoner.save
-			logger.info "Game #{game.gameId} saved."
+			#logger.info "Game #{game.gameId} saved."
 		end
 
 
-		return @summoner.summonerId
+		return @summoner
 	end
 end

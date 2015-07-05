@@ -6,7 +6,7 @@ class SummonerController < ApplicationController
 	def search
 		id = Summoner.update(params)
 		if id != "BUSY"
-			redirect_to summoner_results_path(:summId => id)
+			redirect_to summoner_path(:summonerId => id.summonerId)
 		else
 			flash[:error] = "Too Many Requests.  Please try again in a few seconds"
 			redirect_to root_path
@@ -14,7 +14,7 @@ class SummonerController < ApplicationController
 	end
 
 	def results
-		@summoner = Summoner.find_by summonerId: params[:summId]
+		@summoner = Summoner.find_by summonerId: params[:summonerId]
 		@game = Game.find_by gameId: @summoner.lastGameId
 
 		@gameData = @game.gameData

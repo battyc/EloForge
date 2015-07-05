@@ -3,9 +3,9 @@ class CreateSummoners < ActiveRecord::Migration
     create_table :summoners do |t|
       t.string :formattedName
       t.string :internalName
-      t.integer :summonerId
-      t.time :lastUpdated
-      t.integer :lastGameId
+      t.bigint :summonerId
+      t.bigint :lastUpdated
+      t.bigint :lastGameId
 
       t.timestamps null: false
     end

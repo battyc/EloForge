@@ -8,7 +8,7 @@
 <% if @update < 900 %>
 <p>Can be updated in: <%= 900 - @update %> seconds.</p>
 <% else %>
-<p>Update Now!</p>
+<p>Update Now!<%= 900 - @update %></p>
 <% end %>
 <p>KDA: <%= (@gameStats['kills'].to_i + @gameStats['assists'].to_i*1.00 )/@gameStats['deaths'].to_i %></p>
 <p>Overall DPS: <%= @gameStats['totalDamageDealt'].to_i / @gameData['matches'][9]['matchDuration']%></p>

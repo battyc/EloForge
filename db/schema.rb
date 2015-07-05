@@ -18,10 +18,10 @@ ActiveRecord::Schema.define(version: 20150702050002) do
 
   create_table "games", force: :cascade do |t|
     t.text     "gameData"
-    t.integer  "gameId"
-    t.integer  "summoner_id"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.integer  "gameId",      limit: 8
+    t.integer  "summoner_id", limit: 8
+    t.datetime "created_at",            null: false
+    t.datetime "updated_at",            null: false
   end
 
   add_index "games", ["gameId"], name: "index_games_on_gameId", using: :btree
@@ -39,11 +39,11 @@ ActiveRecord::Schema.define(version: 20150702050002) do
   create_table "summoners", force: :cascade do |t|
     t.string   "formattedName"
     t.string   "internalName"
-    t.integer  "summonerId"
-    t.time     "lastUpdated"
-    t.integer  "lastGameId"
-    t.datetime "created_at",    null: false
-    t.datetime "updated_at",    null: false
+    t.integer  "summonerId",    limit: 8
+    t.integer  "lastUpdated",   limit: 8
+    t.integer  "lastGameId",    limit: 8
+    t.datetime "created_at",              null: false
+    t.datetime "updated_at",              null: false
   end
 
   add_index "summoners", ["internalName"], name: "index_summoners_on_internalName", using: :btree
