@@ -1,4 +1,5 @@
 class Summoner < ActiveRecord::Base
+	has_many :games
 	def self.update(params)
     	# Check if name is already connected to a number.
     	summName = params['search']
@@ -10,7 +11,6 @@ class Summoner < ActiveRecord::Base
 		# Run only if # is not already stored or it is out of date
 			call = RiotApiCall.new(:server => server, :summName => @internalName)
 			call.getSummonerByName
-			call.save
 			#logger.debug "MODEL LEVEL: #{call.inspect}"
 			@responseHash = call.response
 
@@ -37,15 +37,37 @@ class Summoner < ActiveRecord::Base
 		
 		if (Time.now.to_i - @summoner.lastUpdated.to_i) > 900
 			#If the summoner is due for a game update, update the games.
-			request2 = "https://" + server.downcase + ".api.pvp.net/api/lol/" + server.downcase + "/v2.2/matchhistory/" + @summoner.summonerId.to_s + "?api_key=" + ENV['RIOT_API_KEY'].to_s
+			request2 = "https://" + server.downcase + ".api.pvp.net/api/lol/" + server.downcase + "/" + ENV['MATCH_HISTORY_VERSION'].to_s + "/matchhistory/" + @summoner.summonerId.to_s + "?api_key=" + ENV['RIOT_API_KEY'].to_s
 			call = RiotApiCall.new(:server => server.downcase, :api_call => request2, :summName => @internalName)
-			call.getMatchHistoryById(@summoner.summonerId)
+			call.getMatchHistoryById
 			resp = call.response
-			#logger.debug "#{resp['matches']}"
-			game = Game.new(:gameData => resp, :gameId => resp['matches'][9]['matchId'])			
-			@summoner.lastGameId = game.gameId
+			logger.info "#{resp}"
+			match = resp['matches'].last
+			#query match['matchId']
+			## https://na.api.pvp.net/api/lol/na/v2.2/match/1878587595?includeTimeline=true&api_key=f41ed978-fff5-4ae3-b1df-7e9131627fee
+			match_request = "https://" + server.downcase + ".api.pvp.net/api/lol/" + server.downcase + "/" + ENV['MATCH_VERSION'].to_s + "/match/" + match['matchId'].to_s + "?includeTimeline=true&api_key=" + ENV['RIOT_API_KEY'].to_s
+			match_call = RiotApiCall.new(:server => server.downcase, :api_call => match_request)
+			match_call.getMatchByMatchId
+			match_resp = match_call.response
+			@lame = Game.find_by(gameId: match_resp["matchId"], summoner_id: @summoner.id)
+			
+			logger.debug "LAST: #{@lame.inspect}"
+			if @lame == nil
+				game = Game.new(:gameData => match_resp, :gameId => match_resp['matchId'], :summoner_id => @summoner.id)
+				game.save
+				logger.info 'Game Updated'
+				@summoner.lastGameId = game.gameId
+			else
+				logger.info 'No New Game'
+			end
+			#resp['matches'].each do |match|
+			#	if (Game.find_by gameId: match['matchId'] ) == nil
+			#		game = Game.new(:gameData => resp, :gameId => match['matchId'], :summoner_id => @summoner.id)
+			#		game.save
+			#		@summoner.lastGameId = game.gameId
+			#	end
+			#end		
 			@summoner.lastUpdated = Time.now.to_i
-			game.save
 			@summoner.save
 			#logger.info "Game #{game.gameId} saved."
 		end
