@@ -43,15 +43,13 @@ class Summoner < ActiveRecord::Base
 			resp = call.response
 			logger.info "#{resp}"
 			match = resp['matches'].last
-			#query match['matchId']
-			## https://na.api.pvp.net/api/lol/na/v2.2/match/1878587595?includeTimeline=true&api_key=f41ed978-fff5-4ae3-b1df-7e9131627fee
 			match_request = "https://" + server.downcase + ".api.pvp.net/api/lol/" + server.downcase + "/" + ENV['MATCH_VERSION'].to_s + "/match/" + match['matchId'].to_s + "?includeTimeline=true&api_key=" + ENV['RIOT_API_KEY'].to_s
 			match_call = RiotApiCall.new(:server => server.downcase, :api_call => match_request)
 			match_call.getMatchByMatchId
 			match_resp = match_call.response
 			@lame = Game.find_by(gameId: match_resp["matchId"], summoner_id: @summoner.id)
 			
-			logger.debug "LAST: #{@lame.inspect}"
+			
 			if @lame == nil
 				game = Game.new(:gameData => match_resp, :gameId => match_resp['matchId'], :summoner_id => @summoner.id)
 				game.save
@@ -60,13 +58,7 @@ class Summoner < ActiveRecord::Base
 			else
 				logger.info 'No New Game'
 			end
-			#resp['matches'].each do |match|
-			#	if (Game.find_by gameId: match['matchId'] ) == nil
-			#		game = Game.new(:gameData => resp, :gameId => match['matchId'], :summoner_id => @summoner.id)
-			#		game.save
-			#		@summoner.lastGameId = game.gameId
-			#	end
-			#end		
+	
 			@summoner.lastUpdated = Time.now.to_i
 			@summoner.save
 			#logger.info "Game #{game.gameId} saved."

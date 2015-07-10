@@ -2,6 +2,8 @@ source 'https://rubygems.org'
 
 gem 'dotenv-rails'
 
+gem 'redis'
+
 gem 'slowweb'
 
 gem 'daemons-rails'
