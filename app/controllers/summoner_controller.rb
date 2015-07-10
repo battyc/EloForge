@@ -4,6 +4,7 @@ class SummonerController < ApplicationController
 
 	def search
 		summoner = Summoner.update(params)
+		#gameUpdate
 		if summoner != nil
 			redirect_to summoner_path(:summonerId => summoner.summonerId)
 		else

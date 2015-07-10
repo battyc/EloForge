@@ -9,44 +9,46 @@ class Summoner < ActiveRecord::Base
 
   		if (@summoner == nil)
 		# Run only if # is not already stored or it is out of date
-			call = RiotApiCall.new(:server => server, :summName => @internalName)
-			call.getSummonerByName
-			#logger.debug "MODEL LEVEL: #{call.inspect}"
+			call = RiotApiCall.new(:server => server)
+			call.getSummonerByName(@internalName)
 			@responseHash = call.response
 
-			@summoner = Summoner.find_by summonerId: @responseHash[call.summName]['id']
+			@summoner = Summoner.find_by summonerId: @responseHash[@internalName]['id']
 			if @summoner != nil
 				#summoner is already stored under a different name, update the name
 				@summoner.internalName = @internalName
-				@summoner.formattedName = @responseHash[call.summName]['name']
+				@summoner.formattedName = @responseHash[@internalName]['name']
 				@summoner.lastUpdated = Time.now.to_i
 				@summoner.save
 			else
-				summId = @responseHash[call.summName]['id']
-				@summoner = Summoner.new(:formattedName => @responseHash[call.summName]['name'], :internalName => call.summName, :summonerId => summId, :lastUpdated => (Time.now - ENV['UPDATE_AFTER_SECONDS'].to_i) )
+				summId = @responseHash[@internalName]['id']
+				@summoner = Summoner.new(:formattedName => @responseHash[@internalName]['name'], :internalName => @internalName, :summonerId => summId, :lastUpdated => (Time.now - ENV['UPDATE_AFTER_SECONDS'].to_i) )
 				@summoner.save
 			end
 		elsif (Time.now.to_i - @summoner.lastUpdated.to_i > 900)
-			call = RiotApiCall.new(:server => server, :summName => @internalName)
-			call.getSummonerByName
+			call = RiotApiCall.new(:server => server)
+			call.getSummonerByName(@internalName)
 			resp_hash = call.response
-			@summoner.formattedName = resp_hash[call.summName]['name']
+			@summoner.formattedName = resp_hash[@internalName]['name']
 			@summoner.internalName = @internalName
 			@summoner.save
 		end
 		
 		if (Time.now.to_i - @summoner.lastUpdated.to_i) > 900
 			#If the summoner is due for a game update, update the games.
-			request2 = "https://" + server.downcase + ".api.pvp.net/api/lol/" + server.downcase + "/" + ENV['MATCH_HISTORY_VERSION'].to_s + "/matchhistory/" + @summoner.summonerId.to_s + "?api_key=" + ENV['RIOT_API_KEY'].to_s
-			call = RiotApiCall.new(:server => server.downcase, :api_call => request2, :summName => @internalName)
-			call.getMatchHistoryById
+
+			#Get Match History
+			call = RiotApiCall.new(:server => server.downcase)
+			call.getMatchHistoryById(@summoner.summonerId)
 			resp = call.response
-			logger.info "#{resp}"
+			#Take most recent game
 			match = resp['matches'].last
-			match_request = "https://" + server.downcase + ".api.pvp.net/api/lol/" + server.downcase + "/" + ENV['MATCH_VERSION'].to_s + "/match/" + match['matchId'].to_s + "?includeTimeline=true&api_key=" + ENV['RIOT_API_KEY'].to_s
-			match_call = RiotApiCall.new(:server => server.downcase, :api_call => match_request)
-			match_call.getMatchByMatchId
+			#Get that games full details
+			match_call = RiotApiCall.new(:server => server.downcase)
+			match_call.getMatchByMatchId(match['matchId'].to_s)
 			match_resp = match_call.response
+
+			#CREATE GAME OBJECT : API CALLS COMPLETE 
 			@lame = Game.find_by(gameId: match_resp["matchId"], summoner_id: @summoner.id)
 			
 			
