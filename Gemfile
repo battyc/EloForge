@@ -6,6 +6,8 @@ gem 'redis'
 
 gem 'slowweb'
 
+gem "passenger"
+
 gem 'daemons-rails'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.2.0'

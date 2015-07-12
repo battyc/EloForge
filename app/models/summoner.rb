@@ -1,6 +1,10 @@
 class Summoner < ActiveRecord::Base
 	has_many :games
 	def self.update(params)
+		##
+		# Runs the summoner update sequence.
+		# Accepts params for summoner name server.
+		# Returns a summoner object or throws a does not exist error.
     	# Check if name is already connected to a number.
     	summName = params['search']
     	server = params['servers']['server']
@@ -32,6 +36,8 @@ class Summoner < ActiveRecord::Base
 			@summoner.formattedName = resp_hash[@internalName]['name']
 			@summoner.internalName = @internalName
 			@summoner.save
+		else
+			return nil
 		end
 		
 		if (Time.now.to_i - @summoner.lastUpdated.to_i) > 900
@@ -46,8 +52,6 @@ class Summoner < ActiveRecord::Base
 			@summoner.lastUpdated = Time.now.to_i
 			@summoner.save
 		end
-
-
 
 		return @summoner
 	end
