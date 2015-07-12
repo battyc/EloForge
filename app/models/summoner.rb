@@ -7,13 +7,13 @@ class Summoner < ActiveRecord::Base
 		# Returns a summoner object or throws a does not exist error.
     	# Check if name is already connected to a number.
     	summName = params['search']
-    	server = params['servers']['server']
+    	@server = params['servers']['server'].to_s.downcase
     	@internalName = summName.to_s.downcase.delete(' ')
     	@summoner = Summoner.find_by internalName: @internalName
 
   		if (@summoner == nil)
 		# Run only if # is not already stored or it is out of date
-			call = RiotApiCall.new(:server => server)
+			call = RiotApiCall.new(:server => @server)
 			call.getSummonerByName(@internalName)
 			@responseHash = call.response
 
@@ -30,19 +30,17 @@ class Summoner < ActiveRecord::Base
 				@summoner.save
 			end
 		elsif (Time.now.to_i - @summoner.lastUpdated.to_i > 900)
-			call = RiotApiCall.new(:server => server)
+			call = RiotApiCall.new(:server => @server)
 			call.getSummonerByName(@internalName)
 			resp_hash = call.response
 			@summoner.formattedName = resp_hash[@internalName]['name']
 			@summoner.internalName = @internalName
 			@summoner.save
-		else
-			return nil
 		end
 		
 		if (Time.now.to_i - @summoner.lastUpdated.to_i) > 900
 			# Run the Game Updates
-			gameHash = {:summId => @summoner.id, :server => server.downcase }
+			gameHash = { :summId => @summoner.summonerId, :server => @server, :summoner_id => @summoner.id}
 			matchId = Game.updateLastRanked(gameHash)
 			if matchId != 0
 				@summoner.lastGameId = matchId

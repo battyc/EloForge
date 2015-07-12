@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   root 'static_pages#index'
   get 'static_pages/about', :to => 'static_pages#about', :as => '/about'
 
+  get 'games/show', :to => 'games#show', as: 'game'
   get 'static_pages/index'
   post 'summoner/search'
   get 'summoner/id/:summonerId', to: 'summoner#results', as: 'summoner'

@@ -17,11 +17,26 @@ ActiveRecord::Schema.define(version: 20150620020316) do
   enable_extension "plpgsql"
 
   create_table "games", force: :cascade do |t|
-    t.text     "gameData"
-    t.integer  "gameId",      limit: 8
-    t.integer  "summoner_id", limit: 8
-    t.datetime "created_at",            null: false
-    t.datetime "updated_at",            null: false
+    t.string   "region"
+    t.string   "matchType"
+    t.integer  "matchCreation",      limit: 8
+    t.text     "timeline"
+    t.text     "participants"
+    t.text     "participantIds"
+    t.text     "ownerParticipantId"
+    t.text     "ownerParticipant"
+    t.string   "platformId"
+    t.string   "matchMode"
+    t.string   "matchVersion"
+    t.text     "teams"
+    t.string   "mapId"
+    t.integer  "matchDuration"
+    t.string   "queueType"
+    t.string   "season"
+    t.integer  "gameId",             limit: 8
+    t.integer  "summoner_id",        limit: 8
+    t.datetime "created_at",                   null: false
+    t.datetime "updated_at",                   null: false
   end
 
   add_index "games", ["gameId"], name: "index_games_on_gameId", using: :btree

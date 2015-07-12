@@ -6,7 +6,7 @@ class SummonerController < ApplicationController
 		summoner = Summoner.update(params)
 		#gameUpdate
 		if summoner != nil
-			redirect_to summoner_path(:summonerId => summoner.summonerId)
+			redirect_to game_path(:summonerId => summoner.summonerId)
 		else
 			flash[:error] = "Too Many Requests.  Please try again in a few seconds"
 			redirect_to root_path
@@ -15,7 +15,9 @@ class SummonerController < ApplicationController
 
 	def results
 		@summoner = Summoner.find_by summonerId: params[:summonerId]
+		
 		@game = Game.where(summoner_id: (@summoner.id)).last
+		
 		@game2 = Game.where(summoner_id: (@summoner.id)).count
 
 		#@gameData = @game.gameData
@@ -26,6 +28,7 @@ class SummonerController < ApplicationController
 		#	@lane = @gameData['participants'][0]['timeline']['role']
 		#end
 		#@queueType = @gameData['queueType']
+
 		@update = (Time.now.to_i - @summoner.lastUpdated.to_i)
 	end
 end

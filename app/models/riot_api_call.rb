@@ -13,7 +13,7 @@ class RiotApiCall
 		#Make the Request
 		request_url = "https://" + self.server.to_s + ".api.pvp.net/api/lol/" + self.server.to_s + "/" + ENV['SUMMONER_VERSION'].to_s + "/summoner/by-name/" + summonerName.to_s + "?api_key=" + ENV['RIOT_API_KEY'].to_s
 		self.api_call = request_url
-
+		
 		if $redis.keys("REQUEST").size < ENV['LONG_COUNT_LIMIT'].to_i
 			#if it can, send request
 			time = Time.now.to_i
@@ -41,18 +41,19 @@ class RiotApiCall
 	def getMatchHistoryById(summonerId)
 		#Make the Request
 		self.api_call = "https://" + self.server.to_s + ".api.pvp.net/api/lol/" + self.server.to_s + "/" + ENV['MATCH_HISTORY_VERSION'].to_s + "/matchhistory/" + summonerId.to_s + "?api_key=" + ENV['RIOT_API_KEY'].to_s
+		#Rails.logger.debug "#{self.api_call}"
 		if $redis.keys("REQUEST").size < ENV['LONG_COUNT_LIMIT'].to_i
 			request_url = self.api_call
 			buffer = open(request_url).read
 			result = JSON.parse(buffer)
-			self.response = result
+			return result
 		elsif $redis.keys("REQUEST").size == ENV['LONG_COUNT_LIMIT']
 			request_url = self.api_call
 			Rails.logger.debug "sleeping for #{$redis.first.ttl.to_i} seconds"
 			sleep(($redis.first.ttl.to_i)/1000)
 			buffer = open(request_url).read
 			result = JSON.parse(buffer)
-			self.response = result
+			return result
 		else
 			#TODO Throw Error
 			return 12

@@ -1,6 +1,6 @@
 
 <h2>Welcome!</h2>
-<p>Thanks for stopping by! Follow us on twitter <%= link_to "@EloForge", "https://twitter.com/eloforge" %> for daily updates.</p>
+<p>Please excuse any long search times, the site is currently running on a developer key with a lower rate limit.  Follow us on twitter <%= link_to "@EloForge", "https://twitter.com/eloforge" %> for daily updates and announcements.</p>
 
 
 <h3>Evaluate your last game now!</h3>
@@ -9,4 +9,4 @@
   <%= select 'servers' , 'server', %w(NA EUW EUNE BR LAN), :include_blank => false%>
   <%= submit_tag("Go") %>
 <% end %>
-<!-- #NA EUW EUNE KR BR LAN LAS OCE RU TR -->
+<!-- Valid Servers: #NA EUW EUNE KR BR LAN LAS OCE RU TR -->
