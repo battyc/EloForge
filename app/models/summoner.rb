@@ -9,12 +9,16 @@ class Summoner < ActiveRecord::Base
     	summName = params['search']
     	@server = params['servers']['server'].to_s.downcase
     	@internalName = summName.to_s.downcase.delete(' ')
-    	@summoner = Summoner.find_by internalName: @internalName
+    	@summoner = Summoner.where(internalName: @internalName, server: @server).first
 
   		if (@summoner == nil)
 		# Run only if # is not already stored or it is out of date
 			call = RiotApiCall.new(:server => @server)
-			call.getSummonerByName(@internalName)
+			resp_code = call.getSummonerByName(@internalName)
+			Rails.logger.debug "#{resp_code}"
+			if resp_code == 404
+				return resp_code
+			end
 			@responseHash = call.response
 
 			@summoner = Summoner.find_by summonerId: @responseHash[@internalName]['id']
@@ -26,7 +30,11 @@ class Summoner < ActiveRecord::Base
 				@summoner.save
 			else
 				summId = @responseHash[@internalName]['id']
-				@summoner = Summoner.new(:formattedName => @responseHash[@internalName]['name'], :internalName => @internalName, :summonerId => summId, :lastUpdated => (Time.now - ENV['UPDATE_AFTER_SECONDS'].to_i) )
+				@summoner = Summoner.new(:formattedName => @responseHash[@internalName]['name'],
+				:internalName => @internalName,
+				:summonerId => summId,
+				:server => @server,
+				:lastUpdated => (Time.now - ENV['UPDATE_AFTER_SECONDS'].to_i) )
 				@summoner.save
 			end
 		elsif (Time.now.to_i - @summoner.lastUpdated.to_i > 900)
@@ -35,19 +43,6 @@ class Summoner < ActiveRecord::Base
 			resp_hash = call.response
 			@summoner.formattedName = resp_hash[@internalName]['name']
 			@summoner.internalName = @internalName
-			@summoner.save
-		end
-		
-		if (Time.now.to_i - @summoner.lastUpdated.to_i) > 900
-			# Run the Game Updates
-			gameHash = { :summId => @summoner.summonerId, :server => @server, :summoner_id => @summoner.id}
-			matchId = Game.updateLastRanked(gameHash)
-			if matchId != 0
-				@summoner.lastGameId = matchId
-			else
-				logger.info 'No games added.'
-			end
-			@summoner.lastUpdated = Time.now.to_i
 			@summoner.save
 		end
 

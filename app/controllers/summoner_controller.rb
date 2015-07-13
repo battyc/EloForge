@@ -4,9 +4,29 @@ class SummonerController < ApplicationController
 
 	def search
 		summoner = Summoner.update(params)
-		#gameUpdate
+		Rails.logger.debug "#{summoner}"
+		if summoner.to_s == "404"
+			flash[:alert] = "Summoner not found."
+			return redirect_to root_path
+		end
+
+		@matchId = summoner.lastGameId
+
+		if (Time.now.to_i - summoner.lastUpdated.to_i) > 900
+			# Run the Game Updates
+			gameHash = {:summId => summoner.summonerId, :server => summoner.server, :summoner_id => summoner.id}
+			@matchId = Game.updateLastRanked(gameHash)
+			if @matchId != 0
+				summoner.lastGameId = @matchId
+			else
+				logger.info 'No games added.'
+			end
+			summoner.lastUpdated = Time.now.to_i
+			summoner.save
+		end
+
 		if summoner != nil
-			redirect_to game_path(:summonerId => summoner.summonerId)
+			redirect_to game_path(:game_Id => summoner.lastGameId , :summonerId => summoner.summonerId)
 		else
 			flash[:error] = "Too Many Requests.  Please try again in a few seconds"
 			redirect_to root_path

@@ -9,4 +9,7 @@
   <%= select 'servers' , 'server', %w(NA EUW EUNE BR LAN), :include_blank => false%>
   <%= submit_tag("Go") %>
 <% end %>
+<% if flash[:alert] %>
+    <div class="alert"><%= flash[:alert] %></div>
+  <% end %>
 <!-- Valid Servers: #NA EUW EUNE KR BR LAN LAS OCE RU TR -->

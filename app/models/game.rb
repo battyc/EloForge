@@ -3,6 +3,7 @@ class Game < ActiveRecord::Base
 	serialize :participantIds
 	serialize :teams
 	serialize :ownerParticipant
+	serialize :timeline
 	belongs_to :summoner
 
 	def self.updateLastRanked(gameHash)
@@ -16,20 +17,20 @@ class Game < ActiveRecord::Base
 		resp = call.getMatchHistoryById(summId)
 
 		#Take most recent game
-		#Rails.logger.debug "FIREINTHEHOLE : #{resp}"
 		match = resp['matches'].last
 		#Get that games full details
 		match_call = RiotApiCall.new(:server => server)
 		match_call.getMatchByMatchId(match['matchId'].to_s)
 		match_resp = match_call.response
 		#CREATE GAME OBJECT : API CALLS COMPLETE 
-		@game = Game.find_by(gameId: match_resp["matchId"], summoner_id: summoner_id)
+		@game = Game.where(game_Id: match_resp["matchId"], summoner_id: summoner_id).last
 	
 		@ownerParticipId = 0
 		
 		match_resp["participantIdentities"].each do |m|
 			if m["player"]["summonerId"].to_s == summId
 				@ownerParticipId = m["participantId"]
+				@summonerName = m["player"]["summonerName"].downcase.delete(' ')
 				break
 			end
 		end
@@ -41,7 +42,7 @@ class Game < ActiveRecord::Base
 					:matchCreation => match_resp["matchCreation"],
 					:timeline => match_resp["timeline"],
 					:participants => match_resp["participants"],
-					:participantIds => match_resp["participantIdentities"],
+					
 					:ownerParticipantId => @ownerParticipId,
 					:ownerParticipant => match_resp["participants"][@ownerParticipId.to_i],
 					:platformId => match_resp["platformId"],
@@ -52,11 +53,15 @@ class Game < ActiveRecord::Base
 					:matchDuration => match_resp["matchDuration"],
 					:queueType => match_resp["queueType"],
 					:season => match_resp["season"],
-					:gameId => match_resp['matchId'], 
+					:game_Id => match_resp['matchId'],
+					:ownerId =>  gameHash[:summId].to_s, 
+					:ownerName => @summonerName,
 					:summoner_id => summoner_id)
+
+			# :participantIds => match_resp["participantIdentities"],
 			@game.save
 			logger.info 'Game Updated'
-			return @game.gameId
+			return @game.game_Id
 		else
 			logger.info 'No New Game'
 		end

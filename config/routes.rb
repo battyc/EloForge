@@ -3,10 +3,12 @@ Rails.application.routes.draw do
   root 'static_pages#index'
   get 'static_pages/about', :to => 'static_pages#about', :as => '/about'
 
-  get 'games/show', :to => 'games#show', as: 'game'
+  scope 'summoner/:summonerId' do
+    get 'games/:game_Id', :to => 'games#show', as: 'game'
+  end
   get 'static_pages/index'
   post 'summoner/search'
-  get 'summoner/id/:summonerId', to: 'summoner#results', as: 'summoner'
+  #get 'summoner/id/:summonerId', to: 'summoner#results', as: 'summoner'
   get 'summoner/index'
 
   # The priority is based upon order of creation: first created -> highest priority.

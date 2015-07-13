@@ -19,7 +19,9 @@ class CreateGames < ActiveRecord::Migration
       t.string :season
 
       #t.text :gameData
-      t.bigint :gameId, index: true
+      t.bigint :game_Id, index: true
+      t.bigint :ownerId, index: true
+      t.string :ownerName
       t.bigint :summoner_id
       t.timestamps null: false
     end

@@ -6,6 +6,7 @@ class CreateSummoners < ActiveRecord::Migration
       t.bigint :summonerId
       t.bigint :lastUpdated
       t.bigint :lastGameId
+      t.string :server
 
       t.timestamps null: false
     end

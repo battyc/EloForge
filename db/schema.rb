@@ -33,13 +33,16 @@ ActiveRecord::Schema.define(version: 20150620020316) do
     t.integer  "matchDuration"
     t.string   "queueType"
     t.string   "season"
-    t.integer  "gameId",             limit: 8
+    t.integer  "game_Id",            limit: 8
+    t.integer  "ownerId",            limit: 8
+    t.string   "ownerName"
     t.integer  "summoner_id",        limit: 8
     t.datetime "created_at",                   null: false
     t.datetime "updated_at",                   null: false
   end
 
-  add_index "games", ["gameId"], name: "index_games_on_gameId", using: :btree
+  add_index "games", ["game_Id"], name: "index_games_on_game_Id", using: :btree
+  add_index "games", ["ownerId"], name: "index_games_on_ownerId", using: :btree
 
   create_table "summoners", force: :cascade do |t|
     t.string   "formattedName"
@@ -47,6 +50,7 @@ ActiveRecord::Schema.define(version: 20150620020316) do
     t.integer  "summonerId",    limit: 8
     t.integer  "lastUpdated",   limit: 8
     t.integer  "lastGameId",    limit: 8
+    t.string   "server"
     t.datetime "created_at",              null: false
     t.datetime "updated_at",              null: false
   end

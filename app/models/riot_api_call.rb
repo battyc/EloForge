@@ -20,7 +20,13 @@ class RiotApiCall
 			$redis.set("REQUEST_#{time}" , time)
 			$redis.expire("REQUEST_#{time}", 600)
 			#Rails.logger.debug "REQUEST_#{time}"
+			begin
 			buffer = open(request_url).read
+			rescue => ex
+  				Rails.logger.error ex.message
+  				return 404
+  			end
+  				
 			result = JSON.parse(buffer)
 			self.api_call = request_url
 			self.response = result
@@ -28,7 +34,13 @@ class RiotApiCall
 			Rails.logger.info "sleeping for #{$redis.first.ttl.to_i} seconds"
 			sleep($redis.last.ttl.to_i)
 			#sleep then execute request.
+			begin
 			buffer = open(request_url).read
+			rescue => ex
+  				logger.error ex.message
+  				return 404
+  			end
+
 			result = JSON.parse(buffer)
 			self.api_call = request_url
 			self.response = result
