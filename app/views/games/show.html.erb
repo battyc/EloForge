@@ -1,17 +1,31 @@
+<h1><%= @summoner.formattedName %></h1>
+<div id="game-header">
+	<h3><%= @lane.to_s + " " + @champion["name"].to_s %></h3>
+	<h4>
+	<% @allyNames.each do |a| %>
+		<%= a.to_s %> 
+	<% end %>
+	</h4>
+	<% if @ownerParticipantStats["winner"] == true %>
+<h3 class="win">Victory!</h3>
+<% else %>
+<h3 class="loss">Defeat :(</h3>
+<% end %>
+	<% if @game.queueType.to_s == "RANKED_SOLO_5x5" %>
+	<p><%= @summoner.server.upcase %> <%= @ownerParticipant["highestAchievedSeasonTier"].to_s.capitalize %> Ranked Soloqueue</p>
+	<% end %>
+	<p>Patch <%= @game.matchVersion %></p>
 
-<h1 class="win"><%= @summoner.formattedName %></h1>
-<h1 class="loss"><%= @summoner.formattedName %></h1>
+</div>
 
+<%= @ownerParticipant.inspect %>
 
-
-<p>Games Tracked: <%= @gameCount.to_i %></p>
-<p>Match ID: <%= @game.game_Id %></p>
-<h3>Lane</h3>
-<p>QueueType</p>
+<span>
 <% if @update < 900 %>
 <p>Can be updated in: <%= 900 - @update %> seconds.</p>
 <% else %>
 <p>Update Now!</p>
 <% end %>
+</span>
 
 

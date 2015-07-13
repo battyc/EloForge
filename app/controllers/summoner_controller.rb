@@ -28,7 +28,7 @@ class SummonerController < ApplicationController
 		if summoner != nil
 			redirect_to game_path(:game_Id => summoner.lastGameId , :summonerId => summoner.summonerId)
 		else
-			flash[:error] = "Too Many Requests.  Please try again in a few seconds"
+			flash[:error] = "No valid games were found.  Play a ranked game first and then try again!"
 			redirect_to root_path
 		end
 	end
