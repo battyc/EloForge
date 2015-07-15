@@ -19,29 +19,11 @@
 
 </div>
 
+
+
 <div id="increment-breakdown">
-<% @game.timeline["frames"].each do |frame| %>
-	<%= frame["timestamp"] %> :
-	PARTICIPANT FRAME : 
-	<% frame["participantFrames"][@game.ownerParticipantId].each do |slice| %>
-		<%= slice.to_s %> &nbsp;
-	<% end %>
-	<br /><br />
-
-	<% if frame["events"] != nil %>
-	EVENT FRAME: 
-		<% frame["events"].each do |event| %>
-			<% if event["participantId"] == @game.ownerParticipantId.to_i %>
-				<%= event["timestamp"] / 1000 %> : <%= event["eventType"]%>
-				<% if event["itemId"] != nil %>
-					ItemID: <%= event["itemId"].to_s %>
-				<% end %>
-			<% end %>
-		<% end %>
-	<% end %>
-
-
-	<br /><br />
+<% @userEventFrames.each do |frame| %>
+	<%= frame.inspect %><br />
 <% end %>
 
 </div>
