@@ -54,7 +54,7 @@ class RiotApiCall
 			result = JSON.parse(buffer)
 			self.api_call = request_url
 			self.response = result
-		elsif $redis.keys != nil $redis.keys("REQUEST").size == ENV['LONG_COUNT_LIMIT']
+		elsif $redis.keys != nil && $redis.keys("REQUEST").size == ENV['LONG_COUNT_LIMIT']
 			Rails.logger.info "sleeping for #{$redis.first.ttl.to_i} seconds"
 			sleep($redis.last.ttl.to_i)
 			#sleep then execute request.
