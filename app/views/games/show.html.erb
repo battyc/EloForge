@@ -23,8 +23,29 @@
 
 <div id="increment-breakdown">
 <% @userEventFrames.each do |frame| %>
-	<%= frame.inspect %><br />
+	<% if frame[:timestamp]/1000 >= 60 %>
+	<%= ((frame[:timestamp]/1000)/60).floor %> minutes and <%= ((frame[:timestamp]/1000)%60) %> seconds.
+	<% else %>
+	<%= (frame[:timestamp]/1000) %> seconds.
+	<% end %>
+
+	<% if frame[:event]["eventType"] == "ITEM_PURCHASED" %>
+		Item Purchased: <%= @items["data"][frame[:event]["itemId"].to_s]["name"].to_s %>
+	<% elsif frame[:event]["eventType"] == "SKILL_LEVEL_UP" %>
+		Skill Point : <%= @skillSlots[frame[:event]["skillSlot"]] %>
+	<% elsif frame[:event]["eventType"] == "ITEM_DESTROYED" %>
+		Item Destroyed: <%= @items["data"][frame[:event]["itemId"].to_s]["name"] %>
+	<% elsif frame[:event]["eventType"] == "WARD_PLACED" %>
+		Ward Placed: <%= frame[:event]["wardType"] %>
+	<% else %>
+		FRAME: <%= frame[:event]["eventType"] %>
+	<% end %>
+	<br />
 <% end %>
+
+<!-- {"eventType"=>"SKILL_LEVEL_UP", "timestamp"=>2104, "skillSlot"=>3, "participantId"=>10, "levelUpType"=>"NORMAL"} 
+{"eventType"=>"ITEM_PURCHASED", "timestamp"=>3526, "itemId"=>1056, "participantId"=>10}
+{"eventType"=>"ITEM_DESTROYED", "timestamp"=>248514, "itemId"=>2003, "participantId"=>10}-->
 
 </div>
 

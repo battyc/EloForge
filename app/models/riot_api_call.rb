@@ -17,6 +17,22 @@ class RiotApiCall
 		return result
 	end
 
+	def self.getItemList
+		# NOT COUNTED TOWARDS RATE LIMIT #
+		request_url = "https://global.api.pvp.net/api/lol/static-data/na/" + ENV['CHAMPION_VERSION'].to_s + "/item?itemListData=image&api_key=" + ENV['RIOT_API_KEY'].to_s
+		buffer = open(request_url).read
+		result = JSON.parse(buffer)
+		return result
+	end
+
+	def self.getItemById(itemId)
+		# NOT COUNTED TOWARDS RATE LIMIT #
+		request_url = "https://global.api.pvp.net/api/lol/static-data/na/" + ENV['CHAMPION_VERSION'].to_s + "/item/" + itemId.to_s + "?itemData=image&api_key=" + ENV['RIOT_API_KEY'].to_s
+		buffer = open(request_url).read
+		result = JSON.parse(buffer)
+		return result
+	end
+
 	def getSummonerByName(summonerName)
 		#Make the Request
 		request_url = "https://" + self.server.to_s + ".api.pvp.net/api/lol/" + self.server.to_s + "/" + ENV['SUMMONER_VERSION'].to_s + "/summoner/by-name/" + summonerName.to_s + "?api_key=" + ENV['RIOT_API_KEY'].to_s

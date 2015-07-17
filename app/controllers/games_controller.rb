@@ -6,7 +6,10 @@ class GamesController < ApplicationController
 	@ownerParticipantStats = @ownerParticipant["stats"]
 	ownerTeamId =  @ownerParticipant["teamId"].to_s
 	ownerChampId = @ownerParticipant["championId"].to_s
+	
 	@champion = RiotApiCall.getChampionById(@ownerParticipant["championId"].to_s)
+	@items = RiotApiCall.getItemList
+	@skillSlots = { 1 => "Q", 2 => "W", 3 => "E", 4 => "R" }
 	
 	@userParticipantFrames = []
 	@userEventFrames = []
@@ -28,7 +31,7 @@ class GamesController < ApplicationController
 		if frame["events"] != nil
 	# EVENT FRAMES: 
 			frame["events"].each do |event|
-				if event["participantId"] == @game.ownerParticipantId.to_i
+				if event["participantId"] == @game.ownerParticipantId.to_i || event["creatorId"] == @game.ownerParticipantId.to_i
 					userEventFrameHash = {:timestamp => event["timestamp"], :event => event}
 					@userEventFrames.push(userEventFrameHash)
 				end

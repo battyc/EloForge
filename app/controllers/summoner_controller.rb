@@ -1,6 +1,5 @@
 class SummonerController < ApplicationController
-	def index
-	end
+
 
 	def search
 		summoner = Summoner.update(params)
