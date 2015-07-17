@@ -2,7 +2,7 @@
 <h2>Welcome!</h2>
 <p>Please excuse the mess, the site is currently under development.  We are currently running on a developer key with a lower rate limit so your query may take a few minutes depending on the number of active users.</p>
 
-<h3>Evaluate your last game now!</h3>
+<h3>Evaluate your last <strong>ranked</strong> game now!</h3>
 <%= form_tag("summoner/search", method: "post") do %>
   <%= text_field_tag(:search, nil, placeholder: 'Summoner Name') %>
   <%= select 'servers' , 'server', %w(NA EUW EUNE BR LAN), :include_blank => false%>
