@@ -4,6 +4,8 @@ gem 'dotenv-rails'
 
 gem 'redis'
 
+ruby '2.0.0'
+
 gem 'slowweb'
 
 gem "passenger"
