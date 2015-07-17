@@ -20,8 +20,10 @@
 </div>
 
 
-
 <div id="increment-breakdown">
+
+	<h3>Match Minutes</h3>
+
 <% @userEventFrames.each do |frame| %>
 	<% if frame[:timestamp]/1000 >= 60 %>
 	<%= ((frame[:timestamp]/1000)/60).floor %> minutes and <%= ((frame[:timestamp]/1000)%60) %> seconds.
@@ -43,6 +45,18 @@
 	<br />
 <% end %>
 
+<h3>Level Progression</h3>
+<% @userParticipantFrames.each do |frame|%>
+	Minute <%= (frame[:timestamp]/1000)/60 %> | 
+	Level <%= frame[:frame]["level"] %> | 
+	Gold: <%= frame[:frame]["currentGold"].to_s %> (<%= frame[:frame]["totalGold"] %>) | 
+	CS <%= (frame[:frame]["minionsKilled"].to_i + frame[:frame]["jungleMinionsKilled"].to_i).to_s %> ( Jungle Creeps: <%= frame[:frame]["jungleMinionsKilled"] %>) |
+	XP <%= frame[:frame]["xp"].to_s %>
+	<br />
+<% end %>
+<!--
+{:timestamp=>0, :ownerId=>"10", :frame=>{"participantId"=>10, "position"=>{"x"=>14237, "y"=>14579}, "currentGold"=>475, "totalGold"=>475, "level"=>1, "xp"=>0, "minionsKilled"=>0, "jungleMinionsKilled"=>0, "dominionScore"=>0, "teamScore"=>0}}
+-->
 <!-- {"eventType"=>"SKILL_LEVEL_UP", "timestamp"=>2104, "skillSlot"=>3, "participantId"=>10, "levelUpType"=>"NORMAL"} 
 {"eventType"=>"ITEM_PURCHASED", "timestamp"=>3526, "itemId"=>1056, "participantId"=>10}
 {"eventType"=>"ITEM_DESTROYED", "timestamp"=>248514, "itemId"=>2003, "participantId"=>10}-->
@@ -50,7 +64,7 @@
 </div>
 
 
-<% @ownerParticipant.inspect %>
+<% #@ownerParticipant.inspect %>
 
 <span>
 <% if @update < 900 %>
