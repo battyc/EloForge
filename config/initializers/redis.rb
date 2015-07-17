@@ -1,4 +1,4 @@
-if ENV["REDISCLOUD_URL"]
+if ENV["HEROKU_REDIS_COBALT_URL"]
 
-    $redis = Redis.new(:url => ENV["REDISCLOUD_URL"])
+    $redis = Redis.new(:url => ENV["HEROKU_REDIS_COBALT_URL"])
 end
