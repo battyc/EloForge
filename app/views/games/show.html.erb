@@ -1,10 +1,11 @@
 <h1><%= @summoner.formattedName %></h1>
 
 <div id="game-header">
-	<h3><%= @lane.to_s + " " + @champion["name"].to_s %></h3>
+	<h3><%= image_tag (ENV['CHAMPION_IMAGES'].to_s + @champion["image"]["full"].to_s)%></h3>
 	<h4>
 	<% @allyNames.each do |a| %>
-		<%= a.to_s %> 
+		<%= image_tag((ENV['CHAMPION_IMAGES'].to_s + a["image"]["full"].to_s), height: "60px", alt: "#{a["name"]}") %>
+		<% #a["image"]["full"].to_s %> 
 	<% end %>
 	</h4>
 	<% if @ownerParticipantStats["winner"] == true %>
@@ -32,7 +33,9 @@
 	<% end %>
 
 	<% if frame[:event]["eventType"] == "ITEM_PURCHASED" %>
-		Item Purchased: <%= @items["data"][frame[:event]["itemId"].to_s]["name"].to_s %>
+		Item Purchased: <%= image_tag((ENV['ITEM_IMAGES'].to_s + @items["data"][frame[:event]["itemId"].to_s]["image"]["full"].to_s)) %>
+
+		<%= @items["data"][frame[:event]["itemId"].to_s]["name"].to_s %>
 	<% elsif frame[:event]["eventType"] == "SKILL_LEVEL_UP" %>
 		Skill Point : <%= @skillSlots[frame[:event]["skillSlot"]] %>
 	<% elsif frame[:event]["eventType"] == "ITEM_DESTROYED" %>

@@ -45,7 +45,7 @@ class GamesController < ApplicationController
 	@game.participants.each do |p|
 		if p["championId"].to_s != ownerChampId && p["teamId"].to_s == ownerTeamId
 			chmp = RiotApiCall.getChampionById(p["championId"])
-			@allyNames.push chmp["name"].to_s
+			@allyNames.push chmp
 			#Rails.logger.debug "wtf"
 		end
 	end

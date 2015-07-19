@@ -1,9 +1,10 @@
 // Place all the styles related to the summoner controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
-html,
-body{
-background-image: none;
+html, body
+{
+background-image : none;
+background: white;
 font-family: 'Open Sans', sans-serif;
 margin: 0;
 padding: 0;
@@ -16,6 +17,11 @@ color: green;
 .loss
 {
 color: #cd1f1f;
+}
+#header
+{
+background-image: image-url("MetalBg.png")
+
 }
 #footer
 {

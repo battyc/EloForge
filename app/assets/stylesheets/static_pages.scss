@@ -3,3 +3,58 @@
 // You can use Sass (SCSS) here: http://sass-lang.com/
 @import "font-awesome-sprockets";
 @import "font-awesome";
+body, html
+{
+background-image: image-url("MetalBg.png")
+}
+a
+ {
+ color: #cd1f1f;
+ text-decoration: none;
+ }
+#container
+{
+margin: 0;
+padding: 0;
+position: relative;
+width: 100%;
+min-height: 100%;
+}
+#header
+{
+min-width: 180px;
+max-width: 1480px;
+width: 100%;
+margin-left: auto;
+margin-right: auto;
+text-align: center;
+}
+#content
+{
+position: relative;
+padding: 10px;
+background-color:rgba(190,190,190, .5);
+border: 1px solid black;
+border-radius: 15px;
+min-width: 180px;
+max-width: 1064px;
+width: 100%;
+min-height: 300px;
+margin-bottom: 30px;
+margin-left: auto;
+margin-right: auto;
+text-align: center;
+}
+#footer
+{
+padding-top: 5px;
+min-height: 100px;
+background-color: rgba(190,190,190, .5);
+width: 100%;
+text-align: center;
+margin: 10px 0 0 0;
+}
+.main
+{
+width: 25%;
+}
